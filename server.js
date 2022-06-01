@@ -8,7 +8,6 @@ const DB = process.env.DATABASE_STRING.replace(
   "<password>",
   process.env.PASSWORD
 );
-console.log(DB);
 
 mongoose
   .connect(DB, {

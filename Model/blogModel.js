@@ -4,6 +4,7 @@ const blogSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Must have a Title"],
+    unique: true,
   },
   description: {
     type: String,
