@@ -17,13 +17,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Must have a password"],
     minlength: 8,
+    select: false,
   },
   confirmPassword: {
     type: String,
     required: [true, "Must confirm Password"],
     validate: {
       validator: function (el) {
-        return el === this.pasword;
+        return el === this.password;
       },
       message: "Password are not the same",
     },
@@ -31,12 +32,13 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ["Admin", "User"],
-    required: [true, "User must have a role"],
+    // required: [true, "User must have a role"],
+    default: "User",
   },
   Blogs: [],
 });
 
-User.Schema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -47,6 +49,10 @@ User.Schema.pre("save", async function (next) {
   next();
 });
 
-const User = mongoose.Model("User", userSchema);
+userSchema.methods.verifyPassword = function (candidatePassword, userPassword) {
+  return bcrypt.compare(candidatePassword, userPassword);
+};
+
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
